@@ -17,7 +17,7 @@ const Navbar = () => {
         boxShadow='dark-lg' 
         rounded='md' 
         bg='white'
-        
+
         backdropFilter='auto' backdropBlur='8px'
       >
       
@@ -28,7 +28,7 @@ const Navbar = () => {
         <Box>
             <ColorModeSwitcher />
             <Link to='/'>
-                <Button rightIcon={<FaHome />} colorScheme="telegram" mr="4" size='md' variant='ghost'
+                <Button rightIcon={<FaHome />} colorScheme="teal" mr="4" size='md' variant='ghost'
                 >
                     Home
                 </Button>

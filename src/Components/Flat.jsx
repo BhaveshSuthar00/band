@@ -2,7 +2,7 @@ import React from 'react'
 
 const Flat = () => {
   return (
-    <div>Flat</div>
+    <div></div>
   )
 }
 
