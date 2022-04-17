@@ -17,20 +17,20 @@ import {
   useToast,
   Container,
   Spinner, } from '@chakra-ui/react'
-import React, {useState, useEffect} from 'react'
+import React, { useEffect} from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {addFlat, setStatus} from '../Redux/action'
+import {addFlat, getFlatLoading} from '../Redux/action'
 const Main = () => {
   const toast = useToast()
-  const {flat, loading, status} = useSelector((store)=> store);
+  const {flat, loading} = useSelector((store)=> store);
   const dispatch = useDispatch()
-  // const [data, setData] = useState(flat);
   useEffect(()=>{
     axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
       localStorage.setItem('flat', JSON.stringify(res.data.flat))
-      dispatch(addFlat(res.data.flat))
+      dispatch(getFlatLoading())
+      if(flat.length !== res.data.flat.length) dispatch(addFlat(res.data.flat))
     })
   }, [])
   const handleChange = (e) =>{
@@ -45,26 +45,29 @@ const Main = () => {
   const handleBlock = (id)=>{
     let value = id.target.value;
     value = value.toUpperCase();
-    if(value.length === 0){
-      axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
-      localStorage.setItem('flat', JSON.stringify(res.data.flat))
-      dispatch(addFlat(res.data.flat))
-    })
+      if(value.length === 0){
+        axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
+        localStorage.setItem('flat', JSON.stringify(res.data.flat))
+        dispatch(addFlat(res.data.flat))
+      })
     }
     axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
       if(res.data.length<1){
-        dispatch(setStatus(!status))
+        dispatch(getFlatLoading(!loading))
+        setTimeout(() => {
+          dispatch(getFlatLoading(!loading))
+          dispatch(addFlat(JSON.parse(localStorage.getItem('flat'))))
+        }, 1000);
         toast({
           title: 'Not available.',
           status: 'error',
-          duration: 3000,
+          duration: 1000,
           isClosable: true,
         })
       } else {
-              dispatch(addFlat(res.data))
-              dispatch(setStatus(!status))
+          dispatch(addFlat(res.data))
         }
-    }).catch((err)=>{console.log(err)})
+    }).catch((err)=>{dispatch(getFlatLoading(!loading))})
     
   }
   if(loading){
