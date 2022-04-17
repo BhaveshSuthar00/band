@@ -21,7 +21,7 @@ const Login = () => {
       toast({
         title: 'Login successfully.',
         status: 'success',
-        duration: 9000,
+        duration: 3000,
         isClosable: true,
       })
       localStorage.setItem('signin', JSON.stringify(res.data.user));
@@ -31,7 +31,7 @@ const Login = () => {
         title: 'Login failed.',
         discription : "Invalid email or password.",
         status: 'error',
-        duration: 9000,
+        duration: 3000,
         isClosable: true,
       })
       

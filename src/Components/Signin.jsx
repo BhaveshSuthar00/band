@@ -1,23 +1,32 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import {
   FormControl,
   FormLabel,
-  FormHelperText,
   Input,
   Container,
   Button,
-  Heading
+  Heading,
+  useToast
 } from '@chakra-ui/react'
 const Signin = () => {
   const [signin, setSignin] = useState({});
   const navigate = useNavigate()
+  const toast = useToast()
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("https://sunday-server.herokuapp.com/user/login", signin).then((res)=> {
+    axios.post("https://sunday-server.herokuapp.com/user/post", signin).then((res)=> {
       localStorage.setItem('signin', JSON.stringify(res.data.user));
-      navigate('/')
+      console.log(res)
+      toast({
+        title: 'sign in successfully.',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
+      navigate('/login')
     }).catch((err)=> console.log(err));
   }
   const handleChange = (e) => {
