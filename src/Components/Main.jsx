@@ -11,15 +11,14 @@ import {
   Box,
   Spacer,
   TableContainer,
-  Flex,
-  Text,
-  Button,
   HStack,
   Input,
   Select, } from '@chakra-ui/react'
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
+import { Link } from 'react-router-dom';
 const Main = () => {
+  const [status, setStatus] = useState(false);
   const [data, setData] = useState(
     ()=> JSON.parse(localStorage.getItem('flat')) || []
   );
@@ -35,15 +34,31 @@ const Main = () => {
     console.log(res.data)  
     localStorage.setItem('flat', JSON.stringify(res.data))
       setData(res.data)
+      setStatus(!status)
     })
   }
+  const handleBlock = (id)=>{
+    let value = id.target.value;
+    value = value.toUpperCase();
+    axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
+    if(res.data.length<1){
+        console.log('hre')
+        setStatus(!status)
+      } else {
+              setData(res.data)
+              setStatus(!status)
+        }
+    }).catch((err)=>{console.log(err)})
+    
+  }
+  useEffect(()=>{},[status])
   if(data.length === 0){
     return <>Loading...</>
   }
   return (
     <VStack mt={15}>
       <Heading bgGradient='linear(to-l, #7928CA, #FF0080)' bgClip='text'>List of Appartment</Heading>
-      <HStack  w='32%' m={5}>
+      <HStack  w='38%' m={5}>
         <Box p='2' >
           <Select placeholder='Select option' id='sortby' onChange={handleChange}>
             <option value='asc'>Ascending</option>
@@ -52,10 +67,8 @@ const Main = () => {
         </Box>
         <Spacer />
         <Box>
-          <Input p='1' placeholder='Search by Block' />
+          <Input p='1' placeholder='Search by Block' onChange={handleBlock} />
         </Box>
-        <Spacer />
-        <Box p='2' ml='4'>fdfd</Box>
       </HStack>
       <TableContainer>
         <Table variant='simple' size="lg">
@@ -65,6 +78,7 @@ const Main = () => {
               <Th>Image</Th>
               <Th>Type</Th>
               <Th isNumeric>Block</Th>
+              <Th>View</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -77,6 +91,11 @@ const Main = () => {
                   </Td>
                   <Td>{item.type}</Td>
                   <Td isNumeric>{item.block}</Td>
+                  <Td>
+                    <Link to={`/flat/${item._id}`} >
+                      View
+                    </Link>
+                  </Td>
                 </Tr>
               ))
             }
