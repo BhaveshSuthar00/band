@@ -53,7 +53,6 @@ const Main = () => {
     }
     axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
       if(res.data.length<1){
-        dispatch(getFlatLoading(!loading))
         setTimeout(() => {
           dispatch(getFlatLoading(!loading))
           dispatch(addFlat(JSON.parse(localStorage.getItem('flat'))))
@@ -70,7 +69,7 @@ const Main = () => {
     }).catch((err)=>{dispatch(getFlatLoading(!loading))})
     
   }
-  if(loading){
+  if(loading || flat.length === 0){
     return <Container w="50%" mt={50} align="center">
       <Spinner size='xl' thickness='5px'
       speed='0.65s'
