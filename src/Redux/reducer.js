@@ -1,11 +1,14 @@
-import { GET_TODO,GET_TODO_ERROR,GET_TODO_LOADING} from "./action";
+import { GET_TODO,GET_TODO_ERROR,GET_TODO_LOADING,SET_STATUS} from "./action";
 const initState = {
     flat : [],
     loading : false,
-    error : false
+    error : false,
+    state : false,
 }
-export const todoReducer = (store = initState, {type, payload}) => {
+export const flatReducer = (store = initState, {type, payload}) => {
     switch (type){
+        case SET_STATUS: 
+        return {...store, state : payload};
         case GET_TODO : 
         return {...store, flat : payload, loading  : false, error : false};
         case GET_TODO_LOADING : 

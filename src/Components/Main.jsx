@@ -20,28 +20,27 @@ import {
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux';
+import {addFlat, setStatus} from '../Redux/action'
 const Main = () => {
   const toast = useToast()
-
-  const [status, setStatus] = useState(false);
-  const [data, setData] = useState(
-    ()=> JSON.parse(localStorage.getItem('flat')) || []
-  );
+  const {flat, loading, status} = useSelector((store)=> store);
+  const dispatch = useDispatch()
+  // const [data, setData] = useState(flat);
   useEffect(()=>{
     axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
       localStorage.setItem('flat', JSON.stringify(res.data.flat))
-      setData(res.data.flat)
+      dispatch(addFlat(res.data.flat))
     })
   }, [])
   const handleChange = (e) =>{
     const {id, value} = e.target
-    console.log(id, value)
-    axios.get(`https://sunday-server.herokuapp.com/flat/sort?${id}=${value}`).then((res)=>{
-    console.log(res.data)  
-    localStorage.setItem('flat', JSON.stringify(res.data))
-      setData(res.data)
-      setStatus(!status)
-    })
+    if(value === 'asc' || value === 'desc'){
+      axios.get(`https://sunday-server.herokuapp.com/flat/sort?${id}=${value}`).then((res)=>{
+        localStorage.setItem('flat', JSON.stringify(res.data))
+        dispatch(addFlat(res.data))
+      })
+    }
   }
   const handleBlock = (id)=>{
     let value = id.target.value;
@@ -49,13 +48,12 @@ const Main = () => {
     if(value.length === 0){
       axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
       localStorage.setItem('flat', JSON.stringify(res.data.flat))
-      setData(res.data.flat)
+      dispatch(addFlat(res.data.flat))
     })
     }
     axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
-    if(res.data.length<1){
-        console.log('hre')
-        setStatus(!status)
+      if(res.data.length<1){
+        dispatch(setStatus(!status))
         toast({
           title: 'Not available.',
           status: 'error',
@@ -63,14 +61,13 @@ const Main = () => {
           isClosable: true,
         })
       } else {
-              setData(res.data)
-              setStatus(!status)
+              dispatch(addFlat(res.data))
+              dispatch(setStatus(!status))
         }
     }).catch((err)=>{console.log(err)})
     
   }
-  useEffect(()=>{},[status])
-  if(data.length == 0){
+  if(loading){
     return <Container w="50%" mt={50} align="center">
       <Spinner size='xl' thickness='5px'
       speed='0.65s'
@@ -85,7 +82,7 @@ const Main = () => {
         <Box p='2' >
           <Select placeholder='Select option' id='sortby' onChange={handleChange}>
             <option value='asc'>Ascending</option>
-            <option value='dsc'>Descending</option>
+            <option value='desc'>Descending</option>
           </Select>
         </Box>
         <Spacer />
@@ -97,16 +94,16 @@ const Main = () => {
         <Table variant='simple' size="lg">
           <Thead>
             <Tr>
-              <Th isNumeric>Flat NO</Th>
+              <Th>Flat NO</Th>
               <Th>Image</Th>
               <Th>Type</Th>
-              <Th isNumeric>Block</Th>
+              <Th>Block</Th>
               <Th>View</Th>
             </Tr>
           </Thead>
           <Tbody>
             {
-              data && data.map((item, index) =>(
+              flat.length>0 && flat.map((item, index) =>(
                 <Tr key={index} size="md">
                   <Td>{item.flatNo}</Td>
                   <Td>

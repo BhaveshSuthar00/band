@@ -1,26 +1,24 @@
 import React, {useState, useEffect} from 'react'
 import {useParams} from 'react-router-dom'
-import { Badge, Box, Container, Divider, Image, Spinner, Text } from '@chakra-ui/react'
+import { Badge, Box, Container, Image, Spinner, Text } from '@chakra-ui/react'
 
-import { GiRoundStar } from 'react-icons/gi';
 import axios from 'axios';
 const Flat = () => {
   const {id} = useParams();
   const [resident, setR] = useState([]);
-  const [property, setPro] = useState({
-    
-  });
+  const [property, setPro] = useState({});
+  const [res, setRes] = useState(0)
   useEffect(()=>{
     axios.get(`https://sunday-server.herokuapp.com/resident/${id}`).then((res)=>{
       setR(res.data)
-      
+      setRes(res.data.length)
     }).then(()=>{
       axios.get(`https://sunday-server.herokuapp.com/flat/${id}`).then((res)=>{
         setPro(res.data);
       })
     })
     
-  },[])
+  },[id])
   if(property.imageUrl == undefined){
     return <Container w="50%" mt={50} align="center">
       <Spinner size='xl' thickness='5px'
@@ -48,7 +46,7 @@ const Flat = () => {
             textTransform='uppercase'
             ml='2'
           >
-            3 BEDS • 2 BATHS 
+            {res > 0 ? <span>{res}</span> : 1} BEDS • {res > 0 ? <span>{res}</span> : 1}  BATHS 
           </Box>
         </Box>
 
@@ -65,9 +63,14 @@ const Flat = () => {
         </Box>
 
         <Box>
-          <Text fontSize='lg'>Residents are : </Text>
           {
-            resident.map((item, index) => (
+            resident.length > 0 ?
+            <Text fontSize='lg'>Residents are : </Text>
+            :
+            <Text fontSize='lg'>Property is own by single person</Text>
+          }
+          {
+            resident.length> 0 ? resident.map((item) => (
               <Box key={item._id}>
                   <Text>
                     {item.userId.firstName}
@@ -75,7 +78,8 @@ const Flat = () => {
                     {item.userId.lastName}
                   </Text>
               </Box>
-            ))
+            )) : 
+            null
           }
         </Box>
       </Box>

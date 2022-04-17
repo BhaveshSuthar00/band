@@ -10,13 +10,17 @@ import { SiGnuprivacyguard } from "react-icons/si"
 const Navbar = () => {
   return (
     <>
-      <Flex p={2} 
-        mt={1}
+      <Flex p={3} 
         mb={15}
         color='gray.400'
-        boxShadow='dark-lg' 
+        position='sticky'
+        top={0}
+        zIndex={100}
+        boxShadow='dark-lg'
+        w={"100%"}
         rounded='md' 
-        backdropFilter='auto' backdropBlur='8px'
+        backdropFilter='auto' 
+        backdropBlur='8px'
       >
       
         <Box p={2}>
