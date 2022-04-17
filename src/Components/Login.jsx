@@ -8,7 +8,8 @@ import {
   Input,
   useToast,
   Container,
-  Button
+  Button,
+  Heading
 } from '@chakra-ui/react'
 const Login = () => {
   const [signin, setSignin] = useState({});
@@ -18,15 +19,23 @@ const Login = () => {
     e.preventDefault();
     axios.post("https://sunday-server.herokuapp.com/user/login", signin).then((res)=> {
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: 'Login successfully.',
         status: 'success',
         duration: 9000,
         isClosable: true,
       })
       localStorage.setItem('signin', JSON.stringify(res.data.user));
       navigate('/')
-    }).catch((err)=> console.log(err));
+    }).catch((err)=> {
+      toast({
+        title: 'Login failed.',
+        discription : "Invalid email or password.",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+      
+    });
   }
   const handleChange = (e) => {
     const { id, value} = e.target;
@@ -35,6 +44,9 @@ const Login = () => {
   return (
     <>
       <Container mt={30}>
+        <Heading align="center" mb={4}>
+          Login in
+        </Heading>
         <form action="" onSubmit={(e)=> handleSubmit(e)}>
         <FormControl isRequired >
           <FormLabel htmlFor='firstName'>First Name</FormLabel>
@@ -58,7 +70,7 @@ const Login = () => {
             colorScheme='teal'
             type='submit'
           >
-            Submit
+            Login
           </Button>
           </form>
       </Container>

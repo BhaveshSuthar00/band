@@ -13,11 +13,16 @@ import {
   TableContainer,
   HStack,
   Input,
-  Select, } from '@chakra-ui/react'
+  Select,
+  useToast,
+  Container,
+  Spinner, } from '@chakra-ui/react'
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 const Main = () => {
+  const toast = useToast()
+
   const [status, setStatus] = useState(false);
   const [data, setData] = useState(
     ()=> JSON.parse(localStorage.getItem('flat')) || []
@@ -25,6 +30,7 @@ const Main = () => {
   useEffect(()=>{
     axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
       localStorage.setItem('flat', JSON.stringify(res.data.flat))
+      setData(res.data.flat)
     })
   }, [])
   const handleChange = (e) =>{
@@ -40,10 +46,22 @@ const Main = () => {
   const handleBlock = (id)=>{
     let value = id.target.value;
     value = value.toUpperCase();
+    if(value.length === 0){
+      axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
+      localStorage.setItem('flat', JSON.stringify(res.data.flat))
+      setData(res.data.flat)
+    })
+    }
     axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
     if(res.data.length<1){
         console.log('hre')
         setStatus(!status)
+        toast({
+          title: 'Not available.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        })
       } else {
               setData(res.data)
               setStatus(!status)
@@ -52,8 +70,13 @@ const Main = () => {
     
   }
   useEffect(()=>{},[status])
-  if(data.length === 0){
-    return <>Loading...</>
+  if(data.length == 0){
+    return <Container w="50%" mt={50} align="center">
+      <Spinner size='xl' thickness='5px'
+      speed='0.65s'
+      emptyColor='gray.200'
+      color='blue.500'/>
+    </Container>
   }
   return (
     <VStack mt={15}>

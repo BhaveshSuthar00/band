@@ -7,7 +7,8 @@ import {
   FormHelperText,
   Input,
   Container,
-  Button
+  Button,
+  Heading
 } from '@chakra-ui/react'
 const Signin = () => {
   const [signin, setSignin] = useState({});
@@ -26,6 +27,9 @@ const Signin = () => {
   return (
     <>
       <Container mt={30}>
+        <Heading align="center" mb={4}>
+          Sign in
+        </Heading>
         <form action="" onSubmit={(e)=> handleSubmit(e)}>
         <FormControl isRequired >
           <FormLabel htmlFor='firstName'>First Name</FormLabel>
@@ -38,7 +42,6 @@ const Signin = () => {
         <FormControl isRequired>
           <FormLabel htmlFor='email'>Email address</FormLabel>
           <Input id='email' type='email' onChange={handleChange}/>
-          <FormHelperText>We'll never share your email.</FormHelperText>
         </FormControl>
         <FormControl isRequired>
           <FormLabel htmlFor='password'>Pasword</FormLabel>
@@ -49,7 +52,7 @@ const Signin = () => {
             colorScheme='teal'
             type='submit'
           >
-            Submit
+            Sign in
           </Button>
           </form>
       </Container>

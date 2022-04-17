@@ -16,8 +16,6 @@ const Navbar = () => {
         color='gray.400'
         boxShadow='dark-lg' 
         rounded='md' 
-        bg='white'
-
         backdropFilter='auto' backdropBlur='8px'
       >
       
