@@ -6,6 +6,7 @@ const initState = {
     state : false,
     page : 1,
     limit : 1,
+    resident : [],
 }
 export const flatReducer = (store = initState, {type, payload}) => {
     switch (type){
@@ -25,7 +26,7 @@ export const flatReducer = (store = initState, {type, payload}) => {
         case SET_STATUS : 
         return {...store, state : payload};
         case GET_TODO : 
-        return {...store, flat : payload, loading  : false, error : false};
+        return {...store, flat : payload.flat, resident : payload.resident, loading  : false, error : false};
         case GET_TODO_LOADING : 
         return {...store , loading : payload}
         case GET_TODO_ERROR : 

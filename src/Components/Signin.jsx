@@ -35,29 +35,30 @@ const Signin = () => {
   }
   return (
     <>
-      <Container mt={30}>
+      <Container mt={30} boxShadow='xl' p={8}>
         <Heading align="center" mb={4}>
           Sign in
         </Heading>
-        <form action="" onSubmit={(e)=> handleSubmit(e)}>
-        <FormControl isRequired >
+        <form action="" onSubmit={(e)=> handleSubmit(e) }>
+        <FormControl isRequired mb={5}>
           <FormLabel htmlFor='firstName'>First Name</FormLabel>
           <Input id='firstName' type='text' onChange={handleChange} />
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired mb={5}> 
           <FormLabel htmlFor='lastName'>Last Name</FormLabel>
           <Input id='lastName' type='text'  onChange={handleChange}/>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired mb={5}>
           <FormLabel htmlFor='email'>Email address</FormLabel>
           <Input id='email' type='email' onChange={handleChange}/>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired mb={5}>
           <FormLabel htmlFor='password'>Pasword</FormLabel>
           <Input id='password' type='password' placeholder='Enter Password' onChange={handleChange}/>
         </FormControl>
         <Button
             mt={4}
+            w='full'
             colorScheme='teal'
             type='submit'
           >

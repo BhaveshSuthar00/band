@@ -25,18 +25,36 @@ import { Link } from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {addFlat, getFlatLoading, pageChange} from '../Redux/action'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+const breakpoints = {
+  sm: '100%',
+  md: '70%',
+  lg: '50%',
+  xl: '45%',
+  '2xl': '40%',
+}
+const breakpoints2 = {
+  sm: '50px',
+  md: '60px',
+  lg: '70px',
+  xl: '80px',
+  '2xl': '100px',
+}
 const Main = () => {
   const toast = useToast()
-  const {flat, loading, page} = useSelector((store)=> store);
+  const {flat, loading, page, resident} = useSelector((store)=> store);
   const dispatch = useDispatch()
   useEffect(()=>{
     axios.get(`https://sunday-server.herokuapp.com/flat/all?page=${page}&size=3`).then((res)=>{
       localStorage.setItem('flat', JSON.stringify(res.data.flat))
       localStorage.setItem('limiter', JSON.stringify(res.data.totalPages))
-      // dispatch(getFlatLoading())
-      
+      dispatch(getFlatLoading(!loading))
+      let resident = [];
+      for(let i = 0; i<res.data.resident.length; i++){
+        resident.push(res.data.resident[i].length);
+      }
+      localStorage.setItem('resident', JSON.stringify(resident))
       // if(flat.length !== res.data.flat.length) 
-      dispatch(addFlat(res.data.flat))
+      dispatch(addFlat({flat : res.data.flat, resident}))
     })
   }, [page])
   const handleChange = (e) =>{
@@ -101,8 +119,8 @@ const Main = () => {
   }
   return (
     <VStack mt={15}>
-      <Heading bgGradient='linear(to-l, #7928CA, #FF0080)' bgClip='text'>List of Appartment</Heading>
-      <HStack  w='38%' m={5}>
+      <Heading pt={4} bgGradient='linear(to-l, #7928CA, #FF0080)' bgClip='text'>List of Appartment</Heading>
+      <HStack  w={breakpoints} m={5} pt={4}>
         <Box p='2'>
           <Select placeholder='Select option' id='sortby' onChange={handleChange}>
             <option value='asc'>Ascending</option>
@@ -121,27 +139,34 @@ const Main = () => {
           <Input p='1' placeholder='Search by Block' onChange={handleBlock} />
         </Box>
       </HStack>
-      <TableContainer>
-        <Table variant='simple' size="lg">
+      <TableContainer pt="5">
+        <Table variant='striped'>
           <Thead>
             <Tr>
               <Th>Flat NO</Th>
               <Th>Image</Th>
               <Th>Type</Th>
               <Th>Block</Th>
+              <Th>Resident</Th>
               <Th>View</Th>
             </Tr>
           </Thead>
           <Tbody>
             {
               flat.length>0 && flat.map((item, index) =>(
-                <Tr key={index} size="md">
+                <Tr key={index} size="md" >
                   <Td>{item.flatNo}</Td>
-                  <Td>
-                      <Image src={item.imageUrl} boxSize='100px' objectFit='cover' alt='Image' />
+                  <Td >
+                      <Image src={item.imageUrl} boxSize={breakpoints2} align="center" objectFit='cover' alt='Image' />
                   </Td>
                   <Td>{item.type}</Td>
-                  <Td isNumeric>{item.block}</Td>
+                  <Td>{item.block}</Td>
+                  {
+                    resident[index] <= 1 ?
+                      <Td>1</Td>
+                      :
+                      <Td>{resident[index]}</Td>
+                  }
                   <Td>
                     <Link to={`/flat/${item._id}`} >
                       View
@@ -154,7 +179,7 @@ const Main = () => {
           </Tbody>
           
         </Table>
-        <Flex>
+        <Flex  mt={2} mb={5} pt={5} >
           <Box p='2'  onClick={()=>handlePage('minus')}>
             <IconButton colorScheme='purple' variant="outline" isRound icon={< AiOutlineLeft />}/>
           </Box>
