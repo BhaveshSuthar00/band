@@ -17,6 +17,7 @@ import {
   useToast,
   Container,
   Spinner,
+  Center,
   Flex,
   IconButton, } from '@chakra-ui/react'
 import React, { useEffect} from 'react'
@@ -27,14 +28,14 @@ import {addFlat, getFlatLoading, pageChange} from '../Redux/action'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 const breakpoints = {
   sm: '100%',
-  md: '70%',
+  md: '60%',
   lg: '50%',
-  xl: '45%',
-  '2xl': '40%',
+  xl: '100%',
+  '2xl': '100%',
 }
 const breakpoints2 = {
-  sm: '50px',
-  md: '60px',
+  sm: '20px',
+  md: '20px',
   lg: '70px',
   xl: '80px',
   '2xl': '100px',
@@ -119,8 +120,11 @@ const Main = () => {
   }
   return (
     <VStack mt={15}>
-      <Heading pt={4} bgGradient='linear(to-l, #7928CA, #FF0080)' bgClip='text'>List of Appartment</Heading>
-      <HStack  w={breakpoints} m={5} pt={4}>
+      <Container >
+        <Center>
+        <Heading pt={4} bgGradient='linear(to-l, #7928CA, #FF0080)' bgClip='text'>List of Appartment</Heading>
+        </Center>
+      <HStack w="auto"  m={1} pt={3}>
         <Box p='2'>
           <Select placeholder='Select option' id='sortby' onChange={handleChange}>
             <option value='asc'>Ascending</option>
@@ -139,56 +143,59 @@ const Main = () => {
           <Input p='1' placeholder='Search by Block' onChange={handleBlock} />
         </Box>
       </HStack>
-      <TableContainer pt="5">
-        <Table variant='striped'>
-          <Thead>
-            <Tr>
-              <Th>Flat NO</Th>
-              <Th>Image</Th>
-              <Th>Type</Th>
-              <Th>Block</Th>
-              <Th>Resident</Th>
-              <Th>View</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {
-              flat.length>0 && flat.map((item, index) =>(
-                <Tr key={index} size="md" >
-                  <Td>{item.flatNo}</Td>
-                  <Td >
-                      <Image src={item.imageUrl} boxSize={breakpoints2} align="center" objectFit='cover' alt='Image' />
-                  </Td>
-                  <Td>{item.type}</Td>
-                  <Td>{item.block}</Td>
-                  {
-                    resident[index] <= 1 ?
-                      <Td>1</Td>
-                      :
-                      <Td>{resident[index]}</Td>
-                  }
-                  <Td>
-                    <Link to={`/flat/${item._id}`} >
-                      View
-                    </Link>
-                  </Td>
-                </Tr>
-              ))
-            }
+      </Container>
+      <VStack>
+        <TableContainer pt="5">
+          <Table variant='striped'>
+            <Thead>
+              <Tr>
+                <Th>Flat NO</Th>
+                <Th>Image</Th>
+                <Th>Type</Th>
+                <Th>Block</Th>
+                <Th>Resident</Th>
+                <Th>View</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {
+                flat.length>0 && flat.map((item, index) =>(
+                  <Tr key={index} size="md" >
+                    <Td>{item.flatNo}</Td>
+                    <Td >
+                        <Image src={item.imageUrl} boxSize={breakpoints2} align="center" objectFit='cover' alt='Image' />
+                    </Td>
+                    <Td>{item.type}</Td>
+                    <Td>{item.block}</Td>
+                    {
+                      resident[index] <= 1 ?
+                        <Td>1</Td>
+                        :
+                        <Td>{resident[index]}</Td>
+                    }
+                    <Td>
+                      <Link to={`/flat/${item._id}`} >
+                        View
+                      </Link>
+                    </Td>
+                  </Tr>
+                ))
+              }
+              
+            </Tbody>
             
-          </Tbody>
-          
-        </Table>
-        <Flex  mt={2} mb={5} pt={5} >
-          <Box p='2'  onClick={()=>handlePage('minus')}>
-            <IconButton colorScheme='purple' variant="outline" isRound icon={< AiOutlineLeft />}/>
-          </Box>
-          <Spacer />
-          <Box p='2' onClick={()=>handlePage('plus')}>
-            <IconButton colorScheme='purple' variant="outline" isRound icon={< AiOutlineRight />}/>
-          </Box>
-        </Flex>
-      </TableContainer>
+          </Table>
+          <Flex  mt={2} mb={5} pt={5} >
+            <Box p='2'  onClick={()=>handlePage('minus')}>
+              <IconButton colorScheme='purple' variant="outline" isRound icon={< AiOutlineLeft />}/>
+            </Box>
+            <Spacer />
+            <Box p='2' onClick={()=>handlePage('plus')}>
+              <IconButton colorScheme='purple' variant="outline" isRound icon={< AiOutlineRight />}/>
+            </Box>
+          </Flex>
+        </TableContainer>
+      </VStack>
     </VStack>
   )
 }

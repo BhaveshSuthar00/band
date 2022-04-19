@@ -8,7 +8,6 @@ import Navbar from './Components/Navbar'
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      
         <Navbar />
         <AllRoutes />
     </ChakraProvider>

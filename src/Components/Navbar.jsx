@@ -15,9 +15,11 @@ const Navbar = () => {
         color='gray.400'
         position='sticky'
         top={0}
+        right={0}
+        botton={0}
+        left={0}
         zIndex={100}
         boxShadow='dark-lg'
-        w={"100%"}
         rounded='md' 
         backdropFilter='auto' 
         backdropBlur='8px'
