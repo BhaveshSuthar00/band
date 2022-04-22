@@ -26,6 +26,7 @@ const Login = () => {
       })
       localStorage.setItem('signin', JSON.stringify(res.data.user));
       navigate('/')
+      
     }).catch((err)=> {
       toast({
         title: 'Login failed.',
