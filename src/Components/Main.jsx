@@ -14,25 +14,18 @@ import {
   HStack,
   Input,
   Select,
-  useToast,
   Container,
   Spinner,
   Center,
   Flex,
   IconButton, } from '@chakra-ui/react'
 import React, { useEffect} from 'react'
-import axios from 'axios'
 import { Link } from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {addFlat, getFlatLoading, pageChange} from '../Redux/action'
+import {apiCallSortby, apiCallBlock,apiCall, pageChange} from '../Redux/action'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
-const breakpoints = {
-  sm: '100%',
-  md: '60%',
-  lg: '50%',
-  xl: '100%',
-  '2xl': '100%',
-}
+import { BsViewList } from 'react-icons/bs';
+
 const breakpoints2 = {
   sm: '20px',
   md: '20px',
@@ -41,61 +34,25 @@ const breakpoints2 = {
   '2xl': '100px',
 }
 const Main = () => {
-  const toast = useToast()
   const {flat, loading, page, resident} = useSelector((store)=> store);
   const dispatch = useDispatch()
-  useEffect(()=>{
-    axios.get(`https://sunday-server.herokuapp.com/flat/all?page=${page}&size=3`).then((res)=>{
-      localStorage.setItem('flat', JSON.stringify(res.data.flat))
-      localStorage.setItem('limiter', JSON.stringify(res.data.totalPages))
-      dispatch(getFlatLoading(!loading))
-      let resident = [];
-      for(let i = 0; i<res.data.resident.length; i++){
-        resident.push(res.data.resident[i].length);
-      }
-      localStorage.setItem('resident', JSON.stringify(resident))
-      // if(flat.length !== res.data.flat.length) 
-      dispatch(addFlat({flat : res.data.flat, resident}))
-    })
-  }, [page])
   const handleChange = (e) =>{
-    const {id, value} = e.target
+    const {value} = e.target
     if(value === 'asc' || value === 'desc'){
-      axios.get(`https://sunday-server.herokuapp.com/flat/sort?sortby=${value}`).then((res)=>{
-        localStorage.setItem('flat', JSON.stringify(res.data))
-        dispatch(addFlat(res.data))
-      })
+      dispatch(apiCallSortby(value))
     }
   }
   const handleBlock = (id)=>{
     let value = id.target.value;
     value = value.toUpperCase();
       if(value.length === 0){
-        axios.get(`https://sunday-server.herokuapp.com/flat/all`).then((res)=>{
-        localStorage.setItem('flat', JSON.stringify(res.data.flat))
-        dispatch(addFlat(res.data.flat))
-      })
+        dispatch(pageChange({page : 1, value : 'start'}))
+    } else {
+        dispatch(apiCallBlock(value))
     }
-    axios.get(`https://sunday-server.herokuapp.com/flat/block/${value}`).then((res)=>{
-      if(res.data.length<1){
-        setTimeout(() => {
-          dispatch(addFlat(JSON.parse(localStorage.getItem('flat'))))
-        }, 1000);
-        toast({
-          title: 'Not available.',
-          status: 'error',
-          duration: 1000,
-          isClosable: true,
-        })
-      } else {
-          dispatch(addFlat(res.data))
-        }
-    })
-    
   }
   const handlePage = (pg)=> {
     let limit = JSON.parse(localStorage.getItem('limiter'));
-
     if(page <= limit){
       dispatch(pageChange({page : 1, status : pg}));
     }
@@ -103,15 +60,16 @@ const Main = () => {
   const handleType = (id) => {
     const value = id.target.value;
     if(!value) return
-    axios.get('https://sunday-server.herokuapp.com/flat/all').then((res)=>{
-      let arr = res.data.flat.filter((a)=>{
-        if(a.type === value) return a;
-      })
-      dispatch(addFlat(arr));
-    }).catch((err)=> console.log(err))
+    else if(value === 'both') {
+      dispatch(apiCall(1))
+    }
+    else dispatch(apiCallSortby(value));
   }
-  if(loading || flat.length === 0){
-    return <Container w="50%" mt={50} align="center">
+  useEffect(()=>{
+    dispatch(apiCall(page))
+  }, [page])
+  if(loading ){
+    return <Container w="50%" mt={'20%'} align="center">
       <Spinner size='xl' thickness='5px'
       speed='0.65s'
       emptyColor='gray.200'
@@ -133,9 +91,10 @@ const Main = () => {
         </Box>
         <Spacer />
         <Box p='2'>
-          <Select placeholder='Select option'value='' id='type' onChange={handleType}>
-            <option value='owner'>owner</option>
-            <option value='tenant'>tenant</option>
+          <Select placeholder='Select option' value='' id='type' onChange={handleType}>
+            <option value='both'>Both</option>
+            <option value='owner'>Owner</option>
+            <option value='tenant'>Tenant</option>
           </Select>
         </Box>
         <Spacer />
@@ -175,7 +134,9 @@ const Main = () => {
                     }
                     <Td>
                       <Link to={`/flat/${item._id}`} >
-                        View
+                        <IconButton variant="outline">
+                          <BsViewList />
+                        </IconButton>
                       </Link>
                     </Td>
                   </Tr>

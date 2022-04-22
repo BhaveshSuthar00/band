@@ -1,36 +1,38 @@
-import { GET_TODO,GET_TODO_ERROR,GET_TODO_LOADING,PAGING_PAGE ,SET_STATUS} from "./action";
+import { GET_FLAT,GET_FLAT_LOADING,GET_FLAT_SINGLE,PAGING_PAGE ,SET_STATUS} from "./action";
 const initState = {
     flat : [],
     loading : false,
-    error : false,
     state : false,
     page : 1,
     limit : 1,
     resident : [],
+    singleFlat : {},
+    members : []
 }
 export const flatReducer = (store = initState, {type, payload}) => {
     switch (type){
+        case GET_FLAT_SINGLE : 
+        return {...store, members : payload.members, singleFlat : payload.flat, loading  : false}
         case PAGING_PAGE : {
             let newState;
             let limit = JSON.parse(localStorage.getItem('limiter'));
-            if(store.page >= limit && payload.status === 'plus') return store;
-            console.log(payload.status)
-            if(payload.status == 'plus') {
+            if(payload.status === 'plus' && store.page < limit) {
                 newState = store.page + payload.page;
+            } else if(payload.status === 'minus' && store.page > 1) {
+                newState = Math.abs(store.page - payload.page);
+            } else if(payload.status === 'start') {
+                newState = 1;
             } else {
-                newState = store.page - 1;
+                newState = store.page;
             }
-            console.log(payload, newState)
             return {...store , page : newState}
         }
         case SET_STATUS : 
         return {...store, state : payload};
-        case GET_TODO : 
-        return {...store, flat : payload.flat, resident : payload.resident, loading  : false, error : false};
-        case GET_TODO_LOADING : 
+        case GET_FLAT : 
+        return {...store, flat : payload.flat, resident : payload.resident, loading  : false};
+        case GET_FLAT_LOADING : 
         return {...store , loading : payload}
-        case GET_TODO_ERROR : 
-        return {...store, loading : false, error : true}
         default :
         return store;
     }

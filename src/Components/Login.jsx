@@ -48,14 +48,7 @@ const Login = () => {
           Login in
         </Heading>
         <form action="" onSubmit={(e)=> handleSubmit(e)}>
-        <FormControl isRequired mb={5}>
-          <FormLabel htmlFor='firstName'>First Name</FormLabel>
-          <Input id='firstName' type='text' onChange={handleChange} />
-        </FormControl>
-        <FormControl isRequired mb={5}>
-          <FormLabel htmlFor='lastName'>Last Name</FormLabel>
-          <Input id='lastName' type='text'  onChange={handleChange}/>
-        </FormControl>
+        
         <FormControl isRequired mb={5}>
           <FormLabel htmlFor='email'>Email address</FormLabel>
           <Input id='email' type='email' onChange={handleChange}/>

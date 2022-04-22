@@ -6,8 +6,12 @@ import { SiGnuprivacyguard } from "react-icons/si"
 import DrawerExample from './DrawerM'
 import { FaSignInAlt, FaHome } from "react-icons/fa"
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
-
+import {useSelector} from 'react-redux'
 const Navbar = () => {
+  const {loading} = useSelector((store)=> store)
+  if(loading){
+    return <></>
+  }
   return (
     <>
       <Flex p={3} 

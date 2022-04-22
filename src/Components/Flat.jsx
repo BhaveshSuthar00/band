@@ -1,26 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import {useParams} from 'react-router-dom'
 import { Badge, Box, Container, Image, Spinner, Text } from '@chakra-ui/react'
-
-import axios from 'axios';
+import {apiCallFlat} from '../Redux/action'
+import {useSelector, useDispatch} from 'react-redux'
 const Flat = () => {
+  const dispatch = useDispatch();
+  const {members, singleFlat, loading} = useSelector((store) => store);
   const {id} = useParams();
-  const [resident, setR] = useState([]);
-  const [property, setPro] = useState({});
-  const [res, setRes] = useState(0)
+  const [res, setRes] = useState(members.length)
   useEffect(()=>{
-    axios.get(`https://sunday-server.herokuapp.com/resident/${id}`).then((res)=>{
-      setR(res.data)
-      setRes(res.data.length)
-    }).then(()=>{
-      axios.get(`https://sunday-server.herokuapp.com/flat/${id}`).then((res)=>{
-        setPro(res.data);
-      })
-    })
-    
-  },[id])
-  if(property.imageUrl == undefined){
-    return <Container w="50%" mt={50} align="center">
+    dispatch(apiCallFlat(id))
+  },[])
+  if(loading){
+    return <Container w="50%" mt={"20%"} align="center">
       <Spinner size='xl' thickness='5px'
       speed='0.65s'
       emptyColor='gray.200'
@@ -31,7 +23,7 @@ const Flat = () => {
     <Container mt={3}>
 
       <Box maxW='lg' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-      <Image src={property.imageUrl} alt='img' />
+      <Image src={singleFlat.imageUrl} alt='img' />
 
       <Box p='6'>
         <Box display='flex' alignItems='baseline'>
@@ -58,19 +50,19 @@ const Flat = () => {
           isTruncated
         >
           <Text fontSize="xl">
-          Property for : {property.type}
+          singleFlat for : {singleFlat.type}
           </Text>
         </Box>
 
         <Box>
           {
-            resident.length > 0 ?
-            <Text fontSize='lg'>Residents are : </Text>
+            members.length > 0 ?
+            <Text fontSize='lg'>memberss are : </Text>
             :
             <Text fontSize='lg'>Property is own by single person</Text>
           }
           {
-            resident.length> 0 ? resident.map((item) => (
+            members.length> 0 ? members.map((item) => (
               <Box key={item._id}>
                   <Text>
                     {item.userId.firstName}
